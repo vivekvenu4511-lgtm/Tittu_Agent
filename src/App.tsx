@@ -1,82 +1,254 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { Settings, Trash2, Bot, Sparkles } from "lucide-react";
+import { ChatMessage } from "./components/ChatMessage";
+import { ChatInput } from "./components/ChatInput";
+import { ModelSelector } from "./components/ModelSelector";
+import { SettingsModal } from "./components/SettingsModal";
+import { chatWithOllama, chatWithOpenRouter } from "./lib/api";
+import {
+  loadSettings,
+  saveSettings,
+  loadChatHistory,
+  saveChatHistory,
+  clearChatHistory,
+} from "./lib/store";
+import type { Message, Settings as SettingsType } from "./lib/types";
 import "./index.css";
 
-// Simple placeholder UI – will be replaced by the full layout later
-function App() {
-  const [theme, setTheme] = useState<"golden" | "sage" | "pastel" | "ocean">(
-    "golden",
-  );
-  const [font, setFont] = useState<"inter" | "libre" | "source" | "ibm">(
-    "inter",
-  );
+function generateId() {
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
 
-  // Apply CSS variables for theme & font whenever they change
-  useEffect(() => {
-    const root = document.documentElement;
-    // Theme palettes (primary, accent, background)
-    const themes: Record<
-      string,
-      { primary: string; accent: string; bg: string }
-    > = {
-      golden: { primary: "#E7B33B", accent: "#6A4C93", bg: "#FFFFFF" },
-      sage: { primary: "#8FAE7F", accent: "#3B4D61", bg: "#F4FAF8" },
-      pastel: { primary: "#F6C1C0", accent: "#6C5B7B", bg: "#FFFFFF" },
-      ocean: { primary: "#2A7F9F", accent: "#EF476F", bg: "#F0F5F9" },
-    };
-    const fonts: Record<string, string> = {
-      inter: `'Inter', sans-serif`,
-      libre: `'Libre Franklin', sans-serif`,
-      source: `'Source Sans Pro', sans-serif`,
-      ibm: `'IBM Plex Sans', sans-serif`,
-    };
-    const t = themes[theme];
-    root.style.setProperty("--color-primary", t.primary);
-    root.style.setProperty("--color-accent", t.accent);
-    root.style.setProperty("--color-bg", t.bg);
-    root.style.setProperty("--font-sans", fonts[font]);
-  }, [theme, font]);
-
+function WelcomeMessage() {
   return (
-    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-primary)] font-[var(--font-sans)] p-4">
-      <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Tittu Agent</h1>
-        <div className="flex gap-4">
-          <select
-            value={theme}
-            onChange={(e) => setTheme(e.target.value as typeof theme)}
-            className="rounded p-1"
-          >
-            <option value="golden">Golden Dawn</option>
-            <option value="sage">Sage Calm</option>
-            <option value="pastel">Pastel Breeze</option>
-            <option value="ocean">Oceanic Blue</option>
-          </select>
-          <select
-            value={font}
-            onChange={(e) => setFont(e.target.value as typeof font)}
-            className="rounded p-1"
-          >
-            <option value="inter">Inter</option>
-            <option value="libre">Libre Franklin</option>
-            <option value="source">Source Sans Pro</option>
-            <option value="ibm">IBM Plex Sans</option>
-          </select>
-        </div>
-      </header>
-      <main>
-        <p className="mb-4">
-          AI Agent placeholder – the full UI will appear here.
+    <div className="flex flex-col items-center justify-center flex-1 text-center px-4 space-y-4">
+      <div className="w-16 h-16 rounded-2xl bg-[var(--color-primary)]/10 flex items-center justify-center">
+        <Bot size={32} className="text-[var(--color-primary)]" />
+      </div>
+      <div>
+        <h2 className="text-xl font-semibold text-gray-900">
+          Welcome to Tittu Agent
+        </h2>
+        <p className="text-sm text-gray-500 mt-1 max-w-xs">
+          Select a model and start chatting. Ollama models run locally — no API
+          key needed.
         </p>
-        {/* Floating agent button – visible at bottom‑right */}
-        <button
-          className="fixed bottom-4 right-4 bg-[var(--color-primary)] text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
-          title="Open Agent (Ctrl+Space)"
-        >
-          🤖
-        </button>
-      </main>
+      </div>
+      <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 px-3 py-1.5 rounded-full">
+        <Sparkles size={12} />
+        <span>Powered by local Ollama or OpenRouter</span>
+      </div>
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  const [settings, setSettings] = useState<SettingsType>(() => loadSettings());
+  const [messages, setMessages] = useState<Message[]>(() => loadChatHistory());
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    saveChatHistory(messages);
+  }, [messages]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  const handleSend = useCallback(
+    async (content: string) => {
+      const userMsg: Message = {
+        id: generateId(),
+        role: "user",
+        content,
+        timestamp: Date.now(),
+      };
+
+      setMessages((prev) => [...prev, userMsg]);
+      setIsLoading(true);
+
+      const updatedMessages = [...messages, userMsg];
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      let partialContent = "";
+
+      try {
+        if (settings.selectedModel === "gpt-oss-120b") {
+          if (!settings.openRouterApiKey) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: generateId(),
+                role: "assistant",
+                content:
+                  "Error: OpenRouter API key required. Click model selector → API Settings.",
+                timestamp: Date.now(),
+              },
+            ]);
+            setIsLoading(false);
+            return;
+          }
+          await chatWithOpenRouter(
+            "gpt-oss-120b",
+            updatedMessages,
+            settings.openRouterApiKey,
+            (chunk) => {
+              partialContent += chunk;
+              setMessages((prev) => {
+                const withoutPartial = prev.filter(
+                  (m) => m.id !== "__streaming__",
+                );
+                return [
+                  ...withoutPartial,
+                  {
+                    id: "__streaming__",
+                    role: "assistant",
+                    content: partialContent,
+                    timestamp: Date.now(),
+                  },
+                ];
+              });
+            },
+            controller.signal,
+          );
+        } else {
+          await chatWithOllama(
+            settings.selectedModel,
+            updatedMessages,
+            (chunk) => {
+              partialContent += chunk;
+              setMessages((prev) => {
+                const withoutPartial = prev.filter(
+                  (m) => m.id !== "__streaming__",
+                );
+                return [
+                  ...withoutPartial,
+                  {
+                    id: "__streaming__",
+                    role: "assistant",
+                    content: partialContent,
+                    timestamp: Date.now(),
+                  },
+                ];
+              });
+            },
+            controller.signal,
+          );
+        }
+      } catch (err) {
+        if ((err as Error).name !== "AbortError") {
+          setMessages((prev) => [
+            ...prev.filter((m) => m.id !== "__streaming__"),
+            {
+              id: generateId(),
+              role: "assistant",
+              content: `Error: ${(err as Error).message}`,
+              timestamp: Date.now(),
+            },
+          ]);
+        }
+      } finally {
+        setMessages((prev) => prev.filter((m) => m.id !== "__streaming__"));
+        setIsLoading(false);
+        abortRef.current = null;
+      }
+    },
+    [messages, settings],
+  );
+
+  const handleStop = () => {
+    abortRef.current?.abort();
+    setIsLoading(false);
+    setMessages((prev) => prev.filter((m) => m.id !== "__streaming__"));
+  };
+
+  const handleClear = () => {
+    clearChatHistory();
+    setMessages([]);
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-[var(--color-bg)]">
+      {/* Header */}
+      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white flex-shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)] flex items-center justify-center">
+            <Bot size={16} className="text-white" />
+          </div>
+          <h1 className="font-semibold text-gray-900">Tittu Agent</h1>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <ModelSelector
+            selectedModel={settings.selectedModel}
+            ollamaModels={settings.ollamaModels}
+            onModelChange={(model) =>
+              setSettings((s) => {
+                const updated = { ...s, selectedModel: model };
+                saveSettings(updated);
+                return updated;
+              })
+            }
+            onOpenSettings={() => setShowSettings(true)}
+          />
+
+          {messages.length > 0 && (
+            <button
+              onClick={handleClear}
+              className="p-2 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+              title="Clear chat"
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+
+          <button
+            onClick={() => setShowSettings(true)}
+            className="p-2 rounded-lg text-gray-400 hover:text-[var(--color-primary)] hover:bg-[var(--color-bg)] transition-colors"
+            title="Settings"
+          >
+            <Settings size={16} />
+          </button>
+        </div>
+      </header>
+
+      {/* Chat area */}
+      <main className="flex-1 overflow-y-auto">
+        {messages.length === 0 ? (
+          <WelcomeMessage />
+        ) : (
+          <div className="flex flex-col gap-3 p-4">
+            {messages.map((msg) => (
+              <ChatMessage key={msg.id} message={msg} />
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+        )}
+      </main>
+
+      {/* Input */}
+      <ChatInput
+        onSend={handleSend}
+        disabled={false}
+        isLoading={isLoading}
+        onStop={handleStop}
+      />
+
+      {/* Settings modal */}
+      {showSettings && (
+        <SettingsModal
+          settings={settings}
+          onSave={(s) => {
+            setSettings(s);
+            saveSettings(s);
+          }}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
+    </div>
+  );
+}
