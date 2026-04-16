@@ -1,16 +1,66 @@
+mod commands;
+mod providers;
+
+use tauri::Manager;
+use commands::{generate, settings, models};
+use providers::registry::{
+    create_ollama_provider,
+    create_openrouter_provider,
+    create_openai_provider,
+    ProviderRegistry,
+};
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  tauri::Builder::default()
-    .setup(|app| {
-      if cfg!(debug_assertions) {
-        app.handle().plugin(
-          tauri_plugin_log::Builder::default()
-            .level(log::LevelFilter::Info)
-            .build(),
-        )?;
-      }
-      Ok(())
-    })
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
+        .plugin(
+            tauri_plugin_log::Builder::default()
+                .level(log::LevelFilter::Info)
+                .build(),
+        )
+        .manage(ProviderRegistry::new())
+        .setup(|app| {
+            let handle = app.handle().clone();
+            let settings = commands::settings::load_settings_sync(&handle);
+
+            let handle2 = handle.clone();
+            tauri::async_runtime::spawn(async move {
+                let state: tauri::State<'_, ProviderRegistry> = handle2.state();
+
+                // Register Ollama (always available)
+                let ollama = create_ollama_provider(None).await;
+                state.register(ollama).await;
+
+                // Register OpenRouter if API key exists
+                if !settings.openrouter_api_key.is_empty() {
+                    let openrouter = create_openrouter_provider(settings.openrouter_api_key).await;
+                    state.register(openrouter).await;
+                }
+
+                // Register OpenAI if API key exists
+                if !settings.openai_api_key.is_empty() {
+                    let openai = create_openai_provider(settings.openai_api_key, None).await;
+                    state.register(openai).await;
+                }
+
+                log::info!("Tittu Agent backend initialized");
+                let names = state.list().await;
+                log::info!("Registered providers: {:?}", names);
+            });
+
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![
+            generate::generate,
+            generate::list_providers,
+            generate::check_provider_health,
+            settings::load_settings,
+            settings::save_settings,
+            settings::get_settings_path,
+            models::list_ollama_models,
+            models::check_ollama_status,
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

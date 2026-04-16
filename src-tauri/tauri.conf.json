@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "tittu_agent_software",
+  "productName": "Tittu Agent",
   "version": "0.1.0",
   "identifier": "com.vivek.tittuagent",
   "build": {
@@ -12,11 +12,14 @@
   "app": {
     "windows": [
       {
-        "title": "tittu_agent_software",
-        "width": 800,
-        "height": 600,
+        "title": "Tittu Agent",
+        "width": 1100,
+        "height": 750,
+        "minWidth": 700,
+        "minHeight": 500,
         "resizable": true,
-        "fullscreen": false
+        "fullscreen": false,
+        "center": true
       }
     ],
     "security": {
