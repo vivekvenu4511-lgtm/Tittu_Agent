@@ -7,3 +7,9 @@ __pycache__/
 
 # Ignore environment variables
 .env
+
+# Build output
+dist/
+
+# Tauri Rust lockfile (generated on build)
+src-tauri/Cargo.lock
