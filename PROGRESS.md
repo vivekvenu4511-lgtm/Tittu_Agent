@@ -8,9 +8,9 @@
 
 We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite + Tailwind CSS v4). The user has no coding background. The app uses Ollama (local), OpenRouter (free tier `gpt-oss-120b`), OpenAI, and local GGUF models. The user installed VS2022 Build Tools with C++ and .NET workloads manually.
 
-**Completed:** Phases 0-12 (scaffold → cross-device sync)
-**In progress:** Phase 13 (QA + packaging)
-**Pending:** Phase 14
+**Completed:** Phases 0-13 (scaffold → QA)
+**In progress:** Phase 14 (CI automation)
+**Pending:** None
 
 ---
 
@@ -31,7 +31,8 @@ We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite
 | 10    | Self evolution          | ✅ Done    | GitHub release checker, backup/restore, master password                                                                             |
 | 11    | Mobile SDK              | ✅ Done    | Mobile sync APIs, device linking code, get_brain_lib_version                                                                        |
 | 12    | Cross-device sync       | ✅ Done    | Google Drive sync config, upload/download, auto-sync toggle                                                                         |
-| 13    | QA + packaging          | ⬜ Pending | Unit tests, Playwright e2e, unsigned installers                                                                                     |
+| 13    | QA + packaging          | ✅ Done    | Rust unit tests, vitest, Playwright e2e, test npm scripts                                                                           |
+| 14    | CI automation           | ⬜ Pending | Full pipeline: lint → test → build → artifacts                                                                                      |
 | 12    | Cross-device sync       | ⬜ Pending | Google Drive as sync bucket                                                                                                         |
 | 13    | QA + packaging          | ⬜ Pending | Unit tests, Playwright e2e, unsigned installers                                                                                     |
 | 14    | CI automation           | ⬜ Pending | Full pipeline: lint → test → build → artifacts                                                                                      |
@@ -179,13 +180,12 @@ npm run tauri-build
 
 ## Next Steps
 
-**Immediately next:** Implement Phase 13 — QA + packaging
+**Immediately next:** Implement Phase 14 — CI automation
 
-- Add unit tests for core modules
-- Add Playwright e2e tests
-- Build unsigned installers for distribution
+- Update GitHub Actions to run lint → test → build → artifacts
+- Add Tauri build step for Windows/macOS/Linux
 
-**After Phase 13:** Phase 14 — CI automation (Google Drive)
+**After Phase 14:** ALL PHASES COMPLETE! (Google Drive)
 
 ---
 
