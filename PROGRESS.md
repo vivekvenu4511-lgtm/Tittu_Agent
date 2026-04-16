@@ -3,14 +3,14 @@
 ## Conversation Summary
 
 **Last updated:** 2026-04-16
-**Latest commit:** `9210c3b` (fix: resolve borrow-after-move in Linux GPU detection)
+**Latest commit:** `87e8139` (feat(phase3): add tool calling engine with <CALL> parser, skill dispatcher, and built-in tools)
 **Repo:** https://github.com/vivekvenu4511-lgtm/Tittu_Agent
 
 We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite + Tailwind CSS v4). The user has no coding background. The app uses Ollama (local), OpenRouter (free tier `gpt-oss-120b`), OpenAI, and local GGUF models. The user installed VS2022 Build Tools with C++ and .NET workloads manually.
 
-**Completed:** Phase 0 (scaffold, CI), Phase 1 (provider abstraction), Phase 2 (local GGUF + GPU detection)
-**In progress:** Phase 3 (tool calling engine)
-**Pending:** Phases 4–14
+**Completed:** Phase 0 (scaffold, CI), Phase 1 (provider abstraction), Phase 2 (local GGUF + GPU detection), Phase 3 (tool calling engine)
+**In progress:** Phase 4 (full skill import)
+**Pending:** Phases 5–14
 
 ---
 
@@ -21,8 +21,8 @@ We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite
 | 0     | Repo scaffold + CI      | ✅ Done    | Tauri 2 + React + Vite + Tailwind v4 + ESLint + TypeScript + GitHub Actions CI                                                      |
 | 1     | Provider abstraction    | ✅ Done    | Ollama, OpenAI, OpenRouter providers via Rust `ProviderEnum`. Frontend wired to `invoke()`.                                         |
 | 2     | Local GGUF inference    | ✅ Done    | `llama_cpp` crate (feature-gated `gguf`), GPU detection (Windows/Linux/macOS), HuggingFace downloader, Local Models tab in Settings |
-| 3     | Tool calling engine     | 🚧 Next    | Parse `<CALL>{...}</CALL>` JSON blocks, dispatch to skills, built-in tools                                                          |
-| 4     | Full skill import       | ⬜ Pending | Extract skills from SKILL.md files, Skills tab UI                                                                                   |
+| 3     | Tool calling engine     | ✅ Done    | Parse `<CALL>{...}</CALL>` JSON blocks, dispatch to skills, 4 built-in tools (fileGen, clipboard, systemCommand)                    |
+| 4     | Full skill import       | 🚧 Next    | Extract skills from SKILL.md files, Skills tab UI                                                                                   |
 | 5     | Floating agent + hotkey | ⬜ Pending | Global shortcut (Ctrl+Space), always-on-top overlay, foreground app context                                                         |
 | 6     | MVP Office Automation   | ⬜ Pending | `processExcelAndMail` — Excel calamine + Outlook COM, formula, dashboard                                                            |
 | 7     | Knowledge base          | ⬜ Pending | Encrypted SQLite + vector index, drag-drop uploads, Google Drive sync                                                               |
@@ -61,14 +61,25 @@ We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite
 - Show inline "Running tool..." indicator
 - Render tool results as expandable cards
 
-### Files to create/modify
+### Files created/modified
 
-- `src-tauri/src/commands/tools.rs` (new)
-- `src-tauri/src/commands/mod.rs` (add tools module)
-- `src-tauri/src/lib.rs` (register tool commands)
-- `src/lib/tools.ts` (new)
-- `src/App.tsx` (integrate tool parsing into streaming loop)
-- `src/components/ToolResult.tsx` (new)
+- `src-tauri/src/commands/tools.rs` (new) — tool parser + 4 built-in tools
+- `src-tauri/src/commands/mod.rs` — added tools module
+- `src-tauri/src/lib.rs` — registered tool commands
+- `src/lib/tools.ts` (new) — frontend parser/dispatcher
+- `src/App.tsx` — integrated tool parsing into streaming loop
+- `src/components/ToolResult.tsx` (new) — result display
+
+### Usage
+
+LLM can request tools like:
+
+```
+<CALL>{"name": "fileGen", "args": {"path": "test.txt", "content": "Hello world"}}</CALL>
+<CALL>{"name": "system_command", "args": {"command": "dir"}}</CALL>
+```
+
+Tool results are displayed inline after execution. Any text outside `<CALL>` blocks is preserved as the assistant's response.
 
 ---
 
@@ -166,13 +177,11 @@ npm run tauri-build
 
 ## Next Steps
 
-**Immediately next:** Implement Phase 3 — tool calling engine
+**Immediately next:** Implement Phase 4 — Full skill import
 
-- Create `src-tauri/src/commands/tools.rs` with tool registry
-- Add `<CALL>` JSON block parser in Rust
-- Create `src/lib/tools.ts` in frontend
-- Integrate tool parsing into `App.tsx` streaming loop
-- Run `npm run lint && npm run typecheck && npm run build && cargo check`
-- Commit and push
+- Read Skills folder structure for SKILL.md files
+- Create skill parser that extracts name, description, prompt, tools from SKILL.md
+- Add Skills tab to Settings modal (or separate page)
+- Display available skills in chat context for LLM
 
-**After Phase 3:** Phase 4 — Full skill import (extract from SKILL.md files)
+**After Phase 4:** Phase 5 — Floating agent + hotkey (global overlay, foreground app context)
