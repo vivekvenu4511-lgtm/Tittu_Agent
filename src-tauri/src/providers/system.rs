@@ -135,9 +135,10 @@ fn detect_gpu_linux() -> GpuInfo {
                 "cpu"
             };
 
+            let vendor = detect_vendor_from_name(&name);
             GpuInfo {
                 name,
-                vendor: detect_vendor_from_name(&name),
+                vendor,
                 memory_mb,
                 backend: backend.to_string(),
                 is_available: true,
