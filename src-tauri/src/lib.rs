@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models};
+use commands::{generate, settings, models, gguf};
 use providers::registry::{
     create_ollama_provider,
     create_openrouter_provider,
@@ -60,6 +60,13 @@ pub fn run() {
             settings::get_settings_path,
             models::list_ollama_models,
             models::check_ollama_status,
+            gguf::get_system_info_cmd,
+            gguf::detect_gpu_cmd,
+            gguf::get_gguf_model_path,
+            gguf::list_local_models,
+            gguf::download_model,
+            #[cfg(feature = "gguf")]
+            run_llama::run_gguf,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

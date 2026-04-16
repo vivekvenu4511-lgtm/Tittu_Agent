@@ -46,7 +46,11 @@ jobs:
             libayatana-appindicator3-dev \
             librsvg2-dev \
             libwebkit2gtk-4.1-dev \
-            patchelf
+            patchelf \
+            libclang-dev \
+            clang
 
-      - name: Build Tauri app
+      - name: Build Tauri app with GGUF support
         run: npm run tauri-build
+        env:
+          TAURI_FEATURES: gguf

@@ -42,6 +42,8 @@ pub enum ProviderEnum {
     Ollama(crate::providers::ollama::OllamaProvider),
     OpenAI(crate::providers::openai::OpenAIProvider),
     OpenRouter(crate::providers::openrouter::OpenRouterProvider),
+    #[cfg(feature = "gguf")]
+    Gguf(crate::providers::gguf::GgufProvider),
 }
 
 impl ProviderEnum {
@@ -50,6 +52,8 @@ impl ProviderEnum {
             ProviderEnum::Ollama(_) => "ollama",
             ProviderEnum::OpenAI(_) => "openai",
             ProviderEnum::OpenRouter(_) => "openrouter",
+            #[cfg(feature = "gguf")]
+            ProviderEnum::Gguf(_) => "gguf",
         }
     }
 
@@ -58,6 +62,8 @@ impl ProviderEnum {
             ProviderEnum::Ollama(p) => p.generate(opts).await,
             ProviderEnum::OpenAI(p) => p.generate(opts).await,
             ProviderEnum::OpenRouter(p) => p.generate(opts).await,
+            #[cfg(feature = "gguf")]
+            ProviderEnum::Gguf(p) => p.generate(opts).await,
         }
     }
 }

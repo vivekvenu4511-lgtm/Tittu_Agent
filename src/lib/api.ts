@@ -204,3 +204,66 @@ export async function chatWithOpenRouter(
 
   return fullText;
 }
+
+export interface LocalModelInfo {
+  name: string;
+  path: string;
+  size_mb: number;
+}
+
+export interface SystemInfo {
+  gpu: GpuInfo;
+  cpu_cores: number;
+  total_memory_mb: number;
+  os: string;
+}
+
+export interface GpuInfo {
+  name: string;
+  vendor: string;
+  memory_mb: number | null;
+  backend: string;
+  is_available: boolean;
+}
+
+export async function getSystemInfo(): Promise<SystemInfo> {
+  return invoke<SystemInfo>("get_system_info_cmd");
+}
+
+export async function detectGpu(): Promise<GpuInfo> {
+  return invoke<GpuInfo>("detect_gpu_cmd");
+}
+
+export async function getGgufModelPath(): Promise<string> {
+  return invoke<string>("get_gguf_model_path");
+}
+
+export async function listLocalModels(): Promise<LocalModelInfo[]> {
+  return invoke<LocalModelInfo[]>("list_local_models");
+}
+
+export async function downloadModel(
+  repoId: string,
+  filename: string,
+): Promise<string> {
+  return invoke<string>("download_model", { repoId, filename });
+}
+
+export async function runGguf(
+  modelFilename: string,
+  messages: Message[],
+  temperature?: number,
+  maxTokens?: number,
+): Promise<string> {
+  const rustMessages: RustChatMessage[] = messages.map((m) => ({
+    role: m.role,
+    content: m.content,
+  }));
+  const resp = await invoke<{ content: string; model: string }>("run_gguf", {
+    modelFilename,
+    messages: rustMessages,
+    temperature: temperature ?? null,
+    maxTokens: maxTokens ?? null,
+  });
+  return resp.content;
+}
