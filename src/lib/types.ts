@@ -18,10 +18,14 @@ export interface Model {
 
 export interface Settings {
   openRouterApiKey: string;
+  openaiApiKey: string;
+  selectedProvider: string;
   selectedModel: string;
   ollamaModels: string[];
   temperature: number;
   maxTokens: number;
+  theme: string;
+  font: string;
 }
 
 export const DEFAULT_OLLAMA_MODELS = [
@@ -35,10 +39,14 @@ export const DEFAULT_OLLAMA_MODELS = [
 
 export const DEFAULT_SETTINGS: Settings = {
   openRouterApiKey: "",
+  openaiApiKey: "",
+  selectedProvider: "ollama",
   selectedModel: "deepseek-r1:8b",
   ollamaModels: DEFAULT_OLLAMA_MODELS,
   temperature: 0.7,
   maxTokens: 2048,
+  theme: "golden",
+  font: "inter",
 };
 
 export const MODEL_MAP: Record<string, Model> = {

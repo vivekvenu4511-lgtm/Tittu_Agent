@@ -7,6 +7,7 @@ import { SettingsModal } from "./components/SettingsModal";
 import { chatWithOllama, chatWithOpenRouter } from "./lib/api";
 import {
   loadSettings,
+  loadSettingsSync,
   saveSettings,
   loadChatHistory,
   saveChatHistory,
@@ -43,7 +44,7 @@ function WelcomeMessage() {
 }
 
 export default function App() {
-  const [settings, setSettings] = useState<SettingsType>(() => loadSettings());
+  const [settings, setSettings] = useState<SettingsType>(loadSettingsSync);
   const [messages, setMessages] = useState<Message[]>(() => loadChatHistory());
   const [isLoading, setIsLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -57,6 +58,14 @@ export default function App() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    loadSettings().then(setSettings);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", settings.theme);
+  }, [settings.theme]);
 
   const handleSend = useCallback(
     async (content: string) => {
@@ -77,45 +86,7 @@ export default function App() {
       let partialContent = "";
 
       try {
-        if (settings.selectedModel === "gpt-oss-120b") {
-          if (!settings.openRouterApiKey) {
-            setMessages((prev) => [
-              ...prev,
-              {
-                id: generateId(),
-                role: "assistant",
-                content:
-                  "Error: OpenRouter API key required. Click model selector → API Settings.",
-                timestamp: Date.now(),
-              },
-            ]);
-            setIsLoading(false);
-            return;
-          }
-          await chatWithOpenRouter(
-            "gpt-oss-120b",
-            updatedMessages,
-            settings.openRouterApiKey,
-            (chunk) => {
-              partialContent += chunk;
-              setMessages((prev) => {
-                const withoutPartial = prev.filter(
-                  (m) => m.id !== "__streaming__",
-                );
-                return [
-                  ...withoutPartial,
-                  {
-                    id: "__streaming__",
-                    role: "assistant",
-                    content: partialContent,
-                    timestamp: Date.now(),
-                  },
-                ];
-              });
-            },
-            controller.signal,
-          );
-        } else {
+        if (settings.selectedProvider === "ollama") {
           await chatWithOllama(
             settings.selectedModel,
             updatedMessages,
@@ -138,6 +109,56 @@ export default function App() {
             },
             controller.signal,
           );
+        } else if (settings.selectedProvider === "openrouter") {
+          if (!settings.openRouterApiKey) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: generateId(),
+                role: "assistant",
+                content:
+                  "Error: OpenRouter API key required. Open Settings and add your key.",
+                timestamp: Date.now(),
+              },
+            ]);
+            setIsLoading(false);
+            return;
+          }
+          await chatWithOpenRouter(
+            settings.selectedModel,
+            updatedMessages,
+            settings.openRouterApiKey,
+            (chunk) => {
+              partialContent += chunk;
+              setMessages((prev) => {
+                const withoutPartial = prev.filter(
+                  (m) => m.id !== "__streaming__",
+                );
+                return [
+                  ...withoutPartial,
+                  {
+                    id: "__streaming__",
+                    role: "assistant",
+                    content: partialContent,
+                    timestamp: Date.now(),
+                  },
+                ];
+              });
+            },
+            controller.signal,
+          );
+        } else {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: generateId(),
+              role: "assistant",
+              content: `Error: Unknown provider '${settings.selectedProvider}'.`,
+              timestamp: Date.now(),
+            },
+          ]);
+          setIsLoading(false);
+          return;
         }
       } catch (err) {
         if ((err as Error).name !== "AbortError") {

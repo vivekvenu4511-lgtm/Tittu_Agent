@@ -31,6 +31,26 @@ export function SettingsModal({
         </div>
 
         <div className="p-5 space-y-5">
+          {/* Provider */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Provider
+            </label>
+            <select
+              value={form.selectedProvider}
+              onChange={(e) =>
+                setForm((f) => ({ ...f, selectedProvider: e.target.value }))
+              }
+              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40 focus:border-[var(--color-primary)] bg-white"
+            >
+              <option value="ollama">Ollama (Local — no API key)</option>
+              <option value="openrouter">
+                OpenRouter (Remote — API key required)
+              </option>
+              <option value="openai">OpenAI (Remote — API key required)</option>
+            </select>
+          </div>
+
           {/* OpenRouter API Key */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -56,6 +76,34 @@ export function SettingsModal({
             </div>
             <p className="text-xs text-gray-500 mt-1">
               Required for OpenRouter models. Get one at openrouter.ai
+            </p>
+          </div>
+
+          {/* OpenAI API Key */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              OpenAI API Key
+            </label>
+            <div className="relative">
+              <input
+                type={showKey ? "text" : "password"}
+                value={form.openaiApiKey}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, openaiApiKey: e.target.value }))
+                }
+                placeholder="sk-..."
+                className="w-full pr-10 pl-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/40 focus:border-[var(--color-primary)]"
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey((v) => !v)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Optional. Required for OpenAI models.
             </p>
           </div>
 
@@ -125,6 +173,38 @@ export function SettingsModal({
               }
               className="w-full accent-[var(--color-primary)]"
             />
+          </div>
+
+          {/* Theme */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+              Theme
+            </label>
+            <div className="grid grid-cols-4 gap-2">
+              {[
+                { id: "golden", label: "Golden", color: "#b45309" },
+                { id: "sage", label: "Sage", color: "#4d7c0f" },
+                { id: "pastel", label: "Pastel", color: "#be185d" },
+                { id: "ocean", label: "Ocean", color: "#1d4ed8" },
+              ].map((theme) => (
+                <button
+                  key={theme.id}
+                  onClick={() => setForm((f) => ({ ...f, theme: theme.id }))}
+                  className={clsx(
+                    "flex flex-col items-center gap-1 p-2 rounded-lg border-2 transition-colors",
+                    form.theme === theme.id
+                      ? "border-[var(--color-primary)] bg-[var(--color-bg)]"
+                      : "border-gray-100 hover:border-gray-200",
+                  )}
+                >
+                  <div
+                    className="w-5 h-5 rounded-full"
+                    style={{ backgroundColor: theme.color }}
+                  />
+                  <span className="text-xs text-gray-600">{theme.label}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
