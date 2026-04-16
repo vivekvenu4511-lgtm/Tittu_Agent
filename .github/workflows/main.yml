@@ -1,0 +1,30 @@
+name: CI – build & test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest            # the runner machine (Ubuntu VM provided by GitHub)
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the Vite frontend
+        run: npm run build
+
+      - name: Build the Tauri desktop app
+        if: github.event_name == 'push'   # run only on pushes to main, not on PR previews
+        run: npm run tauri-build
