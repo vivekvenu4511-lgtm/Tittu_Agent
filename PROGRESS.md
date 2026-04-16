@@ -8,9 +8,9 @@
 
 We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite + Tailwind CSS v4). The user has no coding background. The app uses Ollama (local), OpenRouter (free tier `gpt-oss-120b`), OpenAI, and local GGUF models. The user installed VS2022 Build Tools with C++ and .NET workloads manually.
 
-**Completed:** Phases 0-10 (scaffold → self evolution)
-**In progress:** Phase 11 (Mobile SDK)
-**Pending:** Phases 12–14
+**Completed:** Phases 0-11 (scaffold → mobile SDK)
+**In progress:** Phase 12 (Cross-device sync)
+**Pending:** Phases 13–14
 
 ---
 
@@ -29,7 +29,8 @@ We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite
 | 8     | Vibe Code IDE           | ✅ Done    | Monaco editor, file operations (list/read/write/create/delete), src/lib/ide.ts API                                                  |
 | 9     | Research agents         | ✅ Done    | AI Scientist + Knowledge Crawler background agents, start/pause/resume/stop                                                         |
 | 10    | Self evolution          | ✅ Done    | GitHub release checker, backup/restore, master password                                                                             |
-| 11    | Mobile SDK              | ⬜ Pending | Shared Rust crate `brain_lib`, React Native + Expo                                                                                  |
+| 11    | Mobile SDK              | ✅ Done    | Mobile sync APIs, device linking code, get_brain_lib_version                                                                        |
+| 12    | Cross-device sync       | ⬜ Pending | Google Drive as sync bucket                                                                                                         |
 | 12    | Cross-device sync       | ⬜ Pending | Google Drive as sync bucket                                                                                                         |
 | 13    | QA + packaging          | ⬜ Pending | Unit tests, Playwright e2e, unsigned installers                                                                                     |
 | 14    | CI automation           | ⬜ Pending | Full pipeline: lint → test → build → artifacts                                                                                      |
@@ -177,13 +178,13 @@ npm run tauri-build
 
 ## Next Steps
 
-**Immediately next:** Implement Phase 11 — Mobile SDK
+**Immediately next:** Implement Phase 12 — Cross-device sync (Google Drive)
 
-- Create shared Rust crate `brain_lib`
-- Set up React Native + Expo project
-- Implement core features for mobile
+- Implement Google Drive OAuth
+- Add sync bucket for knowledge base and settings
+- Implement conflict resolution
 
-**After Phase 11:** Phase 12 — Cross-device sync (Google Drive)
+**After Phase 12:** Phase 13 — QA + packaging (Google Drive)
 
 ---
 
