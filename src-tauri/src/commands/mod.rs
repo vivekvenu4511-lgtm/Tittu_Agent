@@ -9,6 +9,7 @@ pub mod ide;
 pub mod research;
 pub mod evolution;
 pub mod mobile;
+pub mod sync;
 
 #[cfg(feature = "office")]
 pub mod office;

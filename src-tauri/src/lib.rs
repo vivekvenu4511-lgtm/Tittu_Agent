@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models, gguf, tools, skills, float, ide, research, evolution, mobile};
+use commands::{generate, settings, models, gguf, tools, skills, float, ide, research, evolution, mobile, sync};
 
 #[cfg(feature = "office")]
 use commands::office;
@@ -124,6 +124,13 @@ pub fn run() {
             mobile::register_mobile_device,
             mobile::disconnect_mobile_device,
             mobile::get_brain_lib_version,
+            sync::get_drive_config,
+            sync::save_drive_config,
+            sync::get_drive_sync_status,
+            sync::sync_to_drive,
+            sync::sync_from_drive,
+            sync::enable_drive_sync,
+            sync::set_auto_sync,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])
