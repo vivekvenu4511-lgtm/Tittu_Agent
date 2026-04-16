@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models, gguf, tools, skills};
+use commands::{generate, settings, models, gguf, tools, skills, float};
 use providers::registry::{
     create_ollama_provider,
     create_openrouter_provider,
@@ -14,6 +14,7 @@ use providers::registry::{
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(
             tauri_plugin_log::Builder::default()
                 .level(log::LevelFilter::Info)
@@ -71,6 +72,11 @@ pub fn run() {
             skills::load_skills,
             skills::get_skill_prompt,
             skills::list_skill_ids,
+            float::register_global_shortcut,
+            float::show_float_window,
+            float::hide_float_window,
+            float::get_foreground_app,
+            float::get_clipboard_text,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])
