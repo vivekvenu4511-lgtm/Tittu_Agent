@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models, gguf, tools, skills, float};
+use commands::{generate, settings, models, gguf, tools, skills, float, ide};
 
 #[cfg(feature = "office")]
 use commands::office;
@@ -98,6 +98,12 @@ pub fn run() {
             knowledge::list_knowledge,
             #[cfg(feature = "knowledge")]
             knowledge::delete_knowledge,
+            ide::list_directory,
+            ide::read_file,
+            ide::write_file,
+            ide::create_file,
+            ide::create_directory,
+            ide::delete_file,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])

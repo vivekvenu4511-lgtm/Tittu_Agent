@@ -5,6 +5,7 @@ pub mod gguf;
 pub mod tools;
 pub mod skills;
 pub mod float;
+pub mod ide;
 
 #[cfg(feature = "office")]
 pub mod office;
