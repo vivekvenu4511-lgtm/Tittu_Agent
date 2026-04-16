@@ -8,6 +8,7 @@ pub mod float;
 pub mod ide;
 pub mod research;
 pub mod evolution;
+pub mod mobile;
 
 #[cfg(feature = "office")]
 pub mod office;

@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models, gguf, tools, skills, float, ide, research, evolution};
+use commands::{generate, settings, models, gguf, tools, skills, float, ide, research, evolution, mobile};
 
 #[cfg(feature = "office")]
 use commands::office;
@@ -117,6 +117,13 @@ pub fn run() {
             evolution::set_master_password,
             evolution::verify_master_password,
             evolution::get_app_version,
+            mobile::get_sync_status,
+            mobile::trigger_sync,
+            mobile::list_connected_devices,
+            mobile::get_mobile_link_code,
+            mobile::register_mobile_device,
+            mobile::disconnect_mobile_device,
+            mobile::get_brain_lib_version,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])
