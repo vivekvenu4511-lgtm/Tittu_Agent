@@ -6,6 +6,7 @@ import { ModelSelector } from "./components/ModelSelector";
 import { SettingsModal } from "./components/SettingsModal";
 import { chatWithOllama, chatWithOpenRouter } from "./lib/api";
 import { parseToolCalls, executeTool, removeCallBlocks } from "./lib/tools";
+import { loadSkills, formatSkillsForContext } from "./lib/skills";
 import {
   loadSettings,
   loadSettingsSync,
@@ -49,6 +50,7 @@ export default function App() {
   const [messages, setMessages] = useState<Message[]>(() => loadChatHistory());
   const [isLoading, setIsLoading] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [skillsContext, setSkillsContext] = useState<string>("");
   const abortRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -68,6 +70,12 @@ export default function App() {
     document.documentElement.setAttribute("data-theme", settings.theme);
   }, [settings.theme]);
 
+  useEffect(() => {
+    loadSkills()
+      .then((manifest) => setSkillsContext(formatSkillsForContext(manifest)))
+      .catch(() => setSkillsContext(""));
+  }, []);
+
   const handleSend = useCallback(
     async (content: string) => {
       const userMsg: Message = {
@@ -80,7 +88,21 @@ export default function App() {
       setMessages((prev) => [...prev, userMsg]);
       setIsLoading(true);
 
-      const updatedMessages = [...messages, userMsg];
+      const skillContextMsg: Message = skillsContext
+        ? {
+            id: "__skills__",
+            role: "system",
+            content: skillsContext,
+            timestamp: Date.now(),
+          }
+        : { id: "", role: "system", content: "", timestamp: 0 };
+
+      const chatMsgs = messages.filter((m) => m.id !== "__skills__");
+      const msgsWithSkills = skillContextMsg.content
+        ? [skillContextMsg, ...chatMsgs, userMsg]
+        : chatMsgs.concat([userMsg]);
+
+      const updatedMessages = msgsWithSkills;
       const controller = new AbortController();
       abortRef.current = controller;
 

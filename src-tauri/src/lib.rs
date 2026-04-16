@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models, gguf, tools};
+use commands::{generate, settings, models, gguf, tools, skills};
 use providers::registry::{
     create_ollama_provider,
     create_openrouter_provider,
@@ -68,6 +68,9 @@ pub fn run() {
             tools::parse_tool_calls,
             tools::execute_tool_call,
             tools::list_tools,
+            skills::load_skills,
+            skills::get_skill_prompt,
+            skills::list_skill_ids,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])
