@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models, gguf, tools, skills, float, ide};
+use commands::{generate, settings, models, gguf, tools, skills, float, ide, research};
 
 #[cfg(feature = "office")]
 use commands::office;
@@ -104,6 +104,13 @@ pub fn run() {
             ide::create_file,
             ide::create_directory,
             ide::delete_file,
+            research::get_agent_state,
+            research::start_agent,
+            research::pause_agent,
+            research::resume_agent,
+            research::stop_agent,
+            research::update_agent_progress,
+            research::list_agents,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])

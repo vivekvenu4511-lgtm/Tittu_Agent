@@ -6,6 +6,7 @@ pub mod tools;
 pub mod skills;
 pub mod float;
 pub mod ide;
+pub mod research;
 
 #[cfg(feature = "office")]
 pub mod office;
