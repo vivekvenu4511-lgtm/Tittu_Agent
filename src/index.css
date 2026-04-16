@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS variables for themes */
+:root {
+  --color-primary: #e7b33b; /* default golden */
+  --color-accent: #6a4c93;
+  --color-bg: #ffffff;
+  --font-sans: "Inter", sans-serif;
+}
