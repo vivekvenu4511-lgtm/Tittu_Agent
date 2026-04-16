@@ -8,9 +8,9 @@
 
 We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite + Tailwind CSS v4). The user has no coding background. The app uses Ollama (local), OpenRouter (free tier `gpt-oss-120b`), OpenAI, and local GGUF models. The user installed VS2022 Build Tools with C++ and .NET workloads manually.
 
-**Completed:** Phase 0 (scaffold, CI), Phase 1 (provider), Phase 2 (GGUF), Phase 3 (tools), Phase 4 (skills), Phase 5 (floating), Phase 6 (Office), Phase 7 (Knowledge), Phase 8 (IDE)
-**In progress:** Phase 9 (Research Agents)
-**Pending:** Phases 10–14
+**Completed:** Phase 0 (scaffold, CI), Phase 1 (provider), Phase 2 (GGUF), Phase 3 (tools), Phase 4 (skills), Phase 5 (floating), Phase 6 (Office), Phase 7 (Knowledge), Phase 8 (IDE), Phase 9 (Research)
+**In progress:** Phase 10 (Self Evolution)
+**Pending:** Phases 11–14
 
 ---
 
@@ -27,7 +27,7 @@ We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite
 | 6     | Office Automation       | ✅ Done    | calamine Excel reader, Outlook COM email, feature-gated with --features office                                                      |
 | 7     | Knowledge base          | ✅ Done    | SQLite storage, add/search/list/delete entries, feature-gated with --features knowledge                                             |
 | 8     | Vibe Code IDE           | ✅ Done    | Monaco editor, file operations (list/read/write/create/delete), src/lib/ide.ts API                                                  |
-| 9     | Research agents         | ⬜ Pending | Background AI Scientist + Knowledge Crawler agents                                                                                  |
+| 9     | Research agents         | ✅ Done    | AI Scientist + Knowledge Crawler background agents, start/pause/resume/stop                                                         |
 | 10    | Self evolution          | ⬜ Pending | GitHub release checker, backup/rollback, master password                                                                            |
 | 11    | Mobile SDK              | ⬜ Pending | Shared Rust crate `brain_lib`, React Native + Expo                                                                                  |
 | 12    | Cross-device sync       | ⬜ Pending | Google Drive as sync bucket                                                                                                         |
@@ -177,7 +177,7 @@ npm run tauri-build
 
 ## Next Steps
 
-**Immediately next:** Implement Phase 9 — Research Agents
+**Immediately next:** Implement Phase 10 — Self Evolution
 
 - Add rusqlite for local database
 - Add tantivy or arrow for vector indexing
