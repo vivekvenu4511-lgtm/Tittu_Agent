@@ -3,14 +3,14 @@
 ## Conversation Summary
 
 **Last updated:** 2026-04-16
-**Latest commit:** `87e8139` (feat(phase3): add tool calling engine with <CALL> parser, skill dispatcher, and built-in tools)
+**Latest commit:** `79bddca` (feat(phase4): add skill import system with SKILL.md parser)
 **Repo:** https://github.com/vivekvenu4511-lgtm/Tittu_Agent
 
 We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite + Tailwind CSS v4). The user has no coding background. The app uses Ollama (local), OpenRouter (free tier `gpt-oss-120b`), OpenAI, and local GGUF models. The user installed VS2022 Build Tools with C++ and .NET workloads manually.
 
-**Completed:** Phase 0 (scaffold, CI), Phase 1 (provider abstraction), Phase 2 (local GGUF + GPU detection), Phase 3 (tool calling engine)
-**In progress:** Phase 4 (full skill import)
-**Pending:** Phases 5–14
+**Completed:** Phase 0 (scaffold, CI), Phase 1 (provider abstraction), Phase 2 (local GGUF + GPU detection), Phase 3 (tool calling engine), Phase 4 (skill import)
+**In progress:** Phase 5 (floating agent + hotkey)
+**Pending:** Phases 6–14
 
 ---
 
@@ -22,8 +22,8 @@ We are building a cross-platform AI agent desktop app (Tauri 2 + React 18 + Vite
 | 1     | Provider abstraction    | ✅ Done    | Ollama, OpenAI, OpenRouter providers via Rust `ProviderEnum`. Frontend wired to `invoke()`.                                         |
 | 2     | Local GGUF inference    | ✅ Done    | `llama_cpp` crate (feature-gated `gguf`), GPU detection (Windows/Linux/macOS), HuggingFace downloader, Local Models tab in Settings |
 | 3     | Tool calling engine     | ✅ Done    | Parse `<CALL>{...}</CALL>` JSON blocks, dispatch to skills, 4 built-in tools (fileGen, clipboard, systemCommand)                    |
-| 4     | Full skill import       | 🚧 Next    | Extract skills from SKILL.md files, Skills tab UI                                                                                   |
-| 5     | Floating agent + hotkey | ⬜ Pending | Global shortcut (Ctrl+Space), always-on-top overlay, foreground app context                                                         |
+| 4     | Full skill import       | ✅ Done    | Extract from SKILL.md, inject as chat context, 100+ skills available                                                                |
+| 5     | Floating agent + hotkey | 🚧 Next    | Global shortcut (Ctrl+Space), always-on-top overlay, foreground app context                                                         |
 | 6     | MVP Office Automation   | ⬜ Pending | `processExcelAndMail` — Excel calamine + Outlook COM, formula, dashboard                                                            |
 | 7     | Knowledge base          | ⬜ Pending | Encrypted SQLite + vector index, drag-drop uploads, Google Drive sync                                                               |
 | 8     | Vibe Code IDE           | ⬜ Pending | 3-pane layout, Monaco editor, file explorer                                                                                         |
@@ -177,11 +177,11 @@ npm run tauri-build
 
 ## Next Steps
 
-**Immediately next:** Implement Phase 4 — Full skill import
+**Immediately next:** Implement Phase 5 — Floating agent + hotkey
 
-- Read Skills folder structure for SKILL.md files
-- Create skill parser that extracts name, description, prompt, tools from SKILL.md
-- Add Skills tab to Settings modal (or separate page)
-- Display available skills in chat context for LLM
+- Add global shortcut (Ctrl+Space / Cmd+Space) via tauri-plugin-global-shortcut
+- Create overlay window (borderless, always on top)
+- Monitor foreground app and clipboard for context injection
+- Inject current app/clipboard as system variables in chat
 
-**After Phase 4:** Phase 5 — Floating agent + hotkey (global overlay, foreground app context)
+**After Phase 5:** Phase 6 — Office Automation (Excel + Outlook COM)
