@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models, gguf};
+use commands::{generate, settings, models, gguf, tools};
 use providers::registry::{
     create_ollama_provider,
     create_openrouter_provider,
@@ -65,6 +65,9 @@ pub fn run() {
             gguf::get_gguf_model_path,
             gguf::list_local_models,
             gguf::download_model,
+            tools::parse_tool_calls,
+            tools::execute_tool_call,
+            tools::list_tools,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])

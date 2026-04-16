@@ -5,6 +5,7 @@ import { ChatInput } from "./components/ChatInput";
 import { ModelSelector } from "./components/ModelSelector";
 import { SettingsModal } from "./components/SettingsModal";
 import { chatWithOllama, chatWithOpenRouter } from "./lib/api";
+import { parseToolCalls, executeTool, removeCallBlocks } from "./lib/tools";
 import {
   loadSettings,
   loadSettingsSync,
@@ -172,11 +173,51 @@ export default function App() {
             },
           ]);
         }
-      } finally {
-        setMessages((prev) => prev.filter((m) => m.id !== "__streaming__"));
-        setIsLoading(false);
-        abortRef.current = null;
       }
+
+      const finalContent = partialContent;
+
+      const toolCalls = parseToolCalls(finalContent);
+      if (toolCalls.length > 0) {
+        for (const call of toolCalls) {
+          try {
+            const result = await executeTool(call.name, call.args);
+            const resultMsg: Message = {
+              id: generateId(),
+              role: "assistant",
+              content: `**[Tool: ${call.name}]**\n\nArgs: ${JSON.stringify(call.args, null, 2)}\n\n**Result:** ${result.success ? "✅" : "❌"} ${result.result}${result.error ? `\n\n**Error:** ${result.error}` : ""}`,
+              timestamp: Date.now(),
+            };
+            setMessages((prev) => [...prev, resultMsg]);
+          } catch (err) {
+            const errorMsg: Message = {
+              id: generateId(),
+              role: "assistant",
+              content: `**[Tool Error]** ${(err as Error).message}`,
+              timestamp: Date.now(),
+            };
+            setMessages((prev) => [...prev, errorMsg]);
+          }
+        }
+      }
+
+      const cleanedContent = removeCallBlocks(finalContent);
+      if (cleanedContent) {
+        setMessages((prev) => [
+          ...prev.filter((m) => m.id !== "__streaming__"),
+          {
+            id: generateId(),
+            role: "assistant",
+            content: cleanedContent,
+            timestamp: Date.now(),
+          },
+        ]);
+      } else {
+        setMessages((prev) => prev.filter((m) => m.id !== "__streaming__"));
+      }
+
+      setIsLoading(false);
+      abortRef.current = null;
     },
     [messages, settings],
   );
