@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./index.css";
 
 // Simple placeholder UI – will be replaced by the full layout later
@@ -43,7 +43,7 @@ function App() {
         <div className="flex gap-4">
           <select
             value={theme}
-            onChange={(e) => setTheme(e.target.value as any)}
+            onChange={(e) => setTheme(e.target.value as typeof theme)}
             className="rounded p-1"
           >
             <option value="golden">Golden Dawn</option>
@@ -53,7 +53,7 @@ function App() {
           </select>
           <select
             value={font}
-            onChange={(e) => setFont(e.target.value as any)}
+            onChange={(e) => setFont(e.target.value as typeof font)}
             className="rounded p-1"
           >
             <option value="inter">Inter</option>
