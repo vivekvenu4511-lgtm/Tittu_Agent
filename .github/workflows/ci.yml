@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  lint-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,6 +27,25 @@ jobs:
 
       - name: TypeScript check
         run: npm run typecheck
+
+      - name: Run unit tests
+        run: npm run test --if-present
+
+  build:
+    runs-on: ubuntu-latest
+    needs: lint-test
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install npm dependencies
+        run: npm ci
 
       - name: Build Vite frontend
         run: npm run build
@@ -54,3 +73,9 @@ jobs:
         run: npm run tauri-build
         env:
           TAURI_FEATURES: gguf
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: tittu-agent
+          path: src-tauri/target/release/bundle/
