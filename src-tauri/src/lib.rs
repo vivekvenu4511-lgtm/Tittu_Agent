@@ -2,7 +2,7 @@ mod commands;
 mod providers;
 
 use tauri::Manager;
-use commands::{generate, settings, models, gguf, tools, skills, float, ide, research};
+use commands::{generate, settings, models, gguf, tools, skills, float, ide, research, evolution};
 
 #[cfg(feature = "office")]
 use commands::office;
@@ -111,6 +111,12 @@ pub fn run() {
             research::stop_agent,
             research::update_agent_progress,
             research::list_agents,
+            evolution::check_for_updates,
+            evolution::create_backup,
+            evolution::list_backups,
+            evolution::set_master_password,
+            evolution::verify_master_password,
+            evolution::get_app_version,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])
