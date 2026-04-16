@@ -3,6 +3,9 @@ mod providers;
 
 use tauri::Manager;
 use commands::{generate, settings, models, gguf, tools, skills, float};
+
+#[cfg(feature = "office")]
+use commands::office;
 use providers::registry::{
     create_ollama_provider,
     create_openrouter_provider,
@@ -77,6 +80,12 @@ pub fn run() {
             float::hide_float_window,
             float::get_foreground_app,
             float::get_clipboard_text,
+            #[cfg(feature = "office")]
+            office::process_excel,
+            #[cfg(feature = "office")]
+            office::send_mail,
+            #[cfg(feature = "office")]
+            office::list_office_tools,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])
