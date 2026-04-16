@@ -28,11 +28,14 @@ reqwest = { version = "0.12", features = ["json", "rustls-tls", "stream"], defau
 num_cpus = "1.16"
 futures = "0.3"
 regex = "1.0"
+uuid = { version = "1.0", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
 
 [features]
 default = []
 gguf = ["dep:llama_cpp"]
 office = ["dep:calamine"]
+knowledge = ["dep:rusqlite"]
 
 [dependencies.llama_cpp]
 version = "0.3"
@@ -42,4 +45,9 @@ features = ["native"]
 [dependencies.calamine]
 version = "0.24"
 optional = true
+
+[dependencies.rusqlite]
+version = "0.31"
+optional = true
+features = ["bundled"]
 

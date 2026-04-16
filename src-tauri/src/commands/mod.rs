@@ -9,5 +9,8 @@ pub mod float;
 #[cfg(feature = "office")]
 pub mod office;
 
+#[cfg(feature = "knowledge")]
+pub mod knowledge;
+
 #[cfg(feature = "gguf")]
 pub mod run_llama;

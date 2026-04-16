@@ -6,6 +6,10 @@ use commands::{generate, settings, models, gguf, tools, skills, float};
 
 #[cfg(feature = "office")]
 use commands::office;
+
+#[cfg(feature = "knowledge")]
+use commands::knowledge;
+
 use providers::registry::{
     create_ollama_provider,
     create_openrouter_provider,
@@ -86,6 +90,14 @@ pub fn run() {
             office::send_mail,
             #[cfg(feature = "office")]
             office::list_office_tools,
+            #[cfg(feature = "knowledge")]
+            knowledge::add_knowledge,
+            #[cfg(feature = "knowledge")]
+            knowledge::search_knowledge,
+            #[cfg(feature = "knowledge")]
+            knowledge::list_knowledge,
+            #[cfg(feature = "knowledge")]
+            knowledge::delete_knowledge,
             #[cfg(feature = "gguf")]
             run_llama::run_gguf,
         ])
