@@ -7,10 +7,8 @@ import {
   Filter,
   Edit3,
   Info,
-  RotateCcw,
   Share2,
 } from "lucide-react";
-import { clsx } from "clsx";
 import { toast } from "sonner";
 
 interface GraphNode {
@@ -48,8 +46,6 @@ export function GraphView({ initialData, editable = false }: GraphViewProps) {
   const [filters, setFilters] = useState<Set<string>>(new Set());
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [dragging, setDragging] = useState<string | null>(null);
-  const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
 
   const nodeTypes = [
     ...new Set(graphData.nodes.map((n) => n.type).filter(Boolean)),
@@ -113,7 +109,6 @@ export function GraphView({ initialData, editable = false }: GraphViewProps) {
       if (!pos) return;
 
       const isSelected = selectedNode?.id === node.id;
-      const isEditing = editNode === node.id;
 
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, nodeRadius, 0, 2 * Math.PI);

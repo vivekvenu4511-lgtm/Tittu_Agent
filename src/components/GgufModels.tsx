@@ -5,7 +5,6 @@ import {
   Trash2,
   Zap,
   AlertCircle,
-  Check,
   RefreshCw,
   HardDrive,
 } from "lucide-react";

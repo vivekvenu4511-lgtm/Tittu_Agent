@@ -4,13 +4,9 @@ import {
   Search,
   Download,
   Upload,
-  Plus,
   ChevronDown,
   ChevronRight,
-  Check,
-  X,
   Lightbulb,
-  AlertCircle,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { toast } from "sonner";
@@ -29,13 +25,13 @@ interface SkillsManagerProps {
   skills?: SkillDefinition[];
 }
 
-export default SkillsManager;
-
-export function SkillsManager({ skills = [] }: SkillsManagerPropsProps) {
-  const [enabledSkills, setEnabledSkills] = useState<Set<string>>(new Set());
+export function SkillsManager({ skills = [] }: SkillsManagerProps) {
+  const [enabledSkills, setEnabledSkills] = useState<Set<string>>(
+    new Set<string>(),
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedBundles, setExpandedBundles] = useState<Set<string>>(
-    new Set(),
+    new Set<string>(),
   );
   const [isLoading, setIsLoading] = useState(true);
 
@@ -136,8 +132,8 @@ export function SkillsManager({ skills = [] }: SkillsManagerPropsProps) {
       if (!file) return;
       const text = await file.text();
       try {
-        const imported = JSON.parse(text);
-        const newEnabled = new Set(imported);
+        const imported = JSON.parse(text) as string[];
+        const newEnabled = new Set<string>(imported);
         setEnabledSkills(newEnabled);
         localStorage.setItem("enabledSkills", JSON.stringify([...newEnabled]));
         toast.success("Skills imported");

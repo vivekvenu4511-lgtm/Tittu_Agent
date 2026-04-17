@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import {
   Zap,
-  Server,
   ArrowRightLeft,
   Cpu,
   Globe,
@@ -27,7 +26,7 @@ export function MCPEngine() {
     timeout: 30,
   });
   const [isSaving, setIsSaving] = useState(false);
-  const [status, setStatus] = useState<{
+  const [status, _setStatus] = useState<{
     local: boolean;
     openrouter: boolean;
   }>({
@@ -58,11 +57,11 @@ export function MCPEngine() {
 
     // Check if OpenRouter key is set
     const apiKey = localStorage.getItem("openrouter_api_key");
-    const hasOpenRouter = !!apiKey;
+    const hasOpenRouter = apiKey !== null;
 
-    setStatus({
-      local: hasLocal,
-      openrouter: hasOpenRouter,
+    _setStatus({
+      local: !!hasLocal,
+      openrouter: !!hasOpenRouter,
     });
   };
 

@@ -1,22 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Monaco from "@monaco-editor/react";
-import {
-  PanelLeft,
-  PanelRight,
-  File,
-  Folder,
-  Plus,
-  Trash2,
-  Save,
-  Play,
-  Terminal as TerminalIcon,
-  X,
-  ChevronRight,
-  ChevronDown,
-  FileCode,
-} from "lucide-react";
+import { Folder, Terminal as TerminalIcon, X, FileCode } from "lucide-react";
 import { clsx } from "clsx";
-import { toast } from "sonner";
 
 interface FileNode {
   id: string;
@@ -64,7 +49,7 @@ const defaultFiles: FileNode[] = [
 ];
 
 export function IDELayout() {
-  const [files, setFiles] = useState<FileNode[]>(defaultFiles);
+  const [files] = useState<FileNode[]>(defaultFiles);
   const [activeFile, setActiveFile] = useState<string | null>("main.ts");
   const [openFiles, setOpenFiles] = useState<string[]>(["main.ts"]);
   const [fileContents, setFileContents] = useState<Record<string, string>>({
@@ -78,8 +63,8 @@ export function IDELayout() {
   ]);
   const [terminalInput, setTerminalInput] = useState("");
   const [showTerminal, setShowTerminal] = useState(true);
-  const [leftPanelWidth, setLeftPanelWidth] = useState(200);
-  const [rightPanelWidth, setRightPanelWidth] = useState(280);
+  const [leftPanelWidth] = useState(200);
+  const [rightPanelWidth] = useState(280);
   const rightPanelRef = useRef<HTMLDivElement>(null);
 
   const activeContent = activeFile ? fileContents[activeFile] : "";
@@ -87,13 +72,6 @@ export function IDELayout() {
   const handleFileChange = (value: string | undefined) => {
     if (activeFile && value !== undefined) {
       setFileContents((prev) => ({ ...prev, [activeFile]: value }));
-    }
-  };
-
-  const handleSave = () => {
-    if (activeFile) {
-      localStorage.setItem(`file_${activeFile}`, fileContents[activeFile]);
-      toast.success(`Saved ${activeFile}`);
     }
   };
 

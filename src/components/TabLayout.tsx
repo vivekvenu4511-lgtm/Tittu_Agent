@@ -13,7 +13,6 @@ import {
   Lightbulb,
   BookOpen,
   HelpCircle,
-  Sparkles,
   Menu,
   X,
 } from "lucide-react";

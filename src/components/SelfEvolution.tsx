@@ -4,9 +4,6 @@ import {
   Upload,
   RefreshCw,
   Shield,
-  AlertCircle,
-  Check,
-  Lock,
   Key,
   Cloud,
   HardDrive,
@@ -33,7 +30,7 @@ export function SelfEvolution() {
   const [backups, setBackups] = useState<BackupInfo[]>([]);
   const [isChecking, setIsChecking] = useState(false);
   const [isUpgrading, setIsUpgrading] = useState(false);
-  const [isLoadingBackups, setIsLoadingBackups] = useState(false);
+  const [, setIsLoadingBackups] = useState(false);
   const [hasPassword, setHasPassword] = useState(false);
   const [passwordModal, setPasswordModal] = useState(false);
   const [password, setPassword] = useState("");

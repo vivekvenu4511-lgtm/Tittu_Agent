@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Send, X, Minimize2, Maximize2, Sparkles } from "lucide-react";
 import { clsx } from "clsx";
-import { Toaster } from "sonner";
 import { chatWithOpenRouter } from "../lib/api";
 import type { Message } from "../lib/types";
 import { getEnabledSkills } from "../skills/registry";

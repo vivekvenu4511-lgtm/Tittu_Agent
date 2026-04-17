@@ -75,14 +75,6 @@ function WelcomeMessage() {
   );
 }
 
-function LoadingSpinner() {
-  return (
-    <div className="flex items-center justify-center p-8">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary)]"></div>
-    </div>
-  );
-}
-
 interface FirstRunWizardProps {
   onComplete: () => void;
 }
@@ -602,7 +594,7 @@ export default function App() {
         <div className="flex items-center gap-2">
           <AgentSelector
             agents={agentRegistry}
-            selectedAgentId={localStorage.getItem("selectedAgent")}
+            selectedAgentId={localStorage.getItem("selectedAgent") ?? undefined}
           />
 
           <ModelSelector

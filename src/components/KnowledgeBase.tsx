@@ -3,14 +3,11 @@ import {
   Upload,
   Download,
   File,
-  Folder,
   Search,
   Trash2,
   RefreshCw,
   Cloud,
   CloudOff,
-  Check,
-  X,
   AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";

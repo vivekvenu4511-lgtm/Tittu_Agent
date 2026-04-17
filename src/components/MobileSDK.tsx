@@ -1,14 +1,5 @@
 import { useState } from "react";
-import {
-  Smartphone,
-  Globe,
-  Cloud,
-  Key,
-  Download,
-  ExternalLink,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+import { Smartphone, Globe, Cloud, Download, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 
 interface MobileConfig {

@@ -1,15 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  FileSpreadsheet,
-  Mail,
-  FileText,
-  Plus,
-  Play,
-  RefreshCw,
-  Check,
-  X,
-  AlertCircle,
-} from "lucide-react";
+import { FileSpreadsheet, Mail, FileText, Plus, Play } from "lucide-react";
 import { toast } from "sonner";
 import { invoke } from "@tauri-apps/api/core";
 

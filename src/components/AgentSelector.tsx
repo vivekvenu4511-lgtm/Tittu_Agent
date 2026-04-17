@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import * as Select from "@radix-ui/react-select";
-import { ChevronDown, Check, User, Bot } from "lucide-react";
+import { ChevronDown, Check, Bot } from "lucide-react";
 import { clsx } from "clsx";
 import { toast } from "sonner";
 
@@ -45,8 +45,6 @@ export function AgentSelector({
       }
     }
   }, [selectedAgent, agents, onAgentChange]);
-
-  const currentAgent = agents.find((a) => a.id === selectedAgent);
 
   if (isLoading) {
     return <div className="animate-pulse h-8 w-32 bg-gray-200 rounded-lg" />;
