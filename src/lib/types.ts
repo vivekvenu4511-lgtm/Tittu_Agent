@@ -40,8 +40,8 @@ export const DEFAULT_OLLAMA_MODELS = [
 export const DEFAULT_SETTINGS: Settings = {
   openRouterApiKey: "",
   openaiApiKey: "",
-  selectedProvider: "ollama",
-  selectedModel: "deepseek-r1:8b",
+  selectedProvider: "openrouter",
+  selectedModel: "deepseek-ai/DeepSeek-R1",
   ollamaModels: DEFAULT_OLLAMA_MODELS,
   temperature: 0.7,
   maxTokens: 2048,
