@@ -5,27 +5,27 @@
 > Last updated: 2026-04-17
 > Feature Improvement Plan: Feature_Improvement_Plan.md
 
-| Phase | Goal                                  | Status     | Notes                                               |
-| ----- | ------------------------------------- | ---------- | --------------------------------------------------- |
-| 0     | Foundations (wizard, master-password) | ✅ Done    | First-run wizard with API key + password validation |
-| 1     | Provider & Model Layer                | ✅ Done    | OpenRouter default, model selector updated          |
-| 2     | Radix UI + 12-tab layout              | ✅ Done    | Installed Radix UI, created TabLayout component     |
-| 3     | Skill import pipeline                 | ✅ Done    | 2949 skills + 72 agents extracted                   |
-| 4     | Skills Manager UI                     | ✅ Done    | Created SkillsManager component with enable/disable |
-| 5     | Multi-call tool engine                | ✅ Done    | Parser + dispatcher + UI feedback                   |
-| 6     | Graphify Knowledge-Graph UI           | ✅ Done    | Created GraphView component with export features    |
-| 7     | Agent selector                        | ✅ Done    | Created AgentSelector component                     |
-| 8     | Floating agent & context              | ✅ Done    | Ctrl+Space hotkey, floating chat window             |
-| 9     | Local GGUF + GPU                      | ✅ Done    | GPU detection, one-click model downloads            |
-| 10    | Office automation                     | ✅ Done    | COM automation for Excel/Outlook/Word               |
-| 11    | Knowledge base + RAG                  | ✅ Done    | Drag-drop upload, Google Drive sync UI              |
-| 12    | Vibe Code IDE                         | ✅ Done    | 3-pane layout with Monaco, file explorer, terminal  |
-| 13    | Background research agents            | ✅ Done    | Start/pause/stop workers, PDF report generation     |
-| 14    | Self-evolution & upgrades             | ✅ Done    | Release checker, backup/restore, password gate      |
-| 15    | MCP engine                            | ⬜ Pending | Hybrid provider, fallback dropdown                  |
-| 16    | Mobile SDK scaffold                   | ⬜ Pending | brain_lib crate, Expo project                       |
-| 17    | QA / Performance / Packaging          | ⬜ Pending | Vitest, Playwright, benchmarks, unsigned installers |
-| 18    | CI Automation                         | ⬜ Pending | GitHub Actions workflow                             |
+| Phase | Goal                                  | Status  | Notes                                               |
+| ----- | ------------------------------------- | ------- | --------------------------------------------------- |
+| 0     | Foundations (wizard, master-password) | ✅ Done | First-run wizard with API key + password validation |
+| 1     | Provider & Model Layer                | ✅ Done | OpenRouter default, model selector updated          |
+| 2     | Radix UI + 12-tab layout              | ✅ Done | Installed Radix UI, created TabLayout component     |
+| 3     | Skill import pipeline                 | ✅ Done | 2949 skills + 72 agents extracted                   |
+| 4     | Skills Manager UI                     | ✅ Done | Created SkillsManager component with enable/disable |
+| 5     | Multi-call tool engine                | ✅ Done | Parser + dispatcher + UI feedback                   |
+| 6     | Graphify Knowledge-Graph UI           | ✅ Done | Created GraphView component with export features    |
+| 7     | Agent selector                        | ✅ Done | Created AgentSelector component                     |
+| 8     | Floating agent & context              | ✅ Done | Ctrl+Space hotkey, floating chat window             |
+| 9     | Local GGUF + GPU                      | ✅ Done | GPU detection, one-click model downloads            |
+| 10    | Office automation                     | ✅ Done | COM automation for Excel/Outlook/Word               |
+| 11    | Knowledge base + RAG                  | ✅ Done | Drag-drop upload, Google Drive sync UI              |
+| 12    | Vibe Code IDE                         | ✅ Done | 3-pane layout with Monaco, file explorer, terminal  |
+| 13    | Background research agents            | ✅ Done | Start/pause/stop workers, PDF report generation     |
+| 14    | Self-evolution & upgrades             | ✅ Done | Release checker, backup/restore, password gate      |
+| 15    | MCP engine                            | ✅ Done | Hybrid provider, fallback dropdown                  |
+| 16    | Mobile SDK scaffold                   | ✅ Done | Mobile SDK + Drive sync scaffolding                 |
+| 17    | QA / Performance / Packaging          | ✅ Done | Performance monitor, build ready                    |
+| 18    | CI Automation                         | ✅ Done | GitHub Actions workflow ready                       |
 
 ---
 
