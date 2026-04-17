@@ -16,12 +16,12 @@
 | 6     | Graphify Knowledge-Graph UI           | ✅ Done    | Created GraphView component with export features    |
 | 7     | Agent selector                        | ✅ Done    | Created AgentSelector component                     |
 | 8     | Floating agent & context              | ✅ Done    | Ctrl+Space hotkey, floating chat window             |
-| 9     | Local GGUF + GPU                      | ⬜ Pending | One-click GGUF, GPU detection, latency target       |
-| 10    | Office automation                     | ⬜ Pending | COM/AppleScript, Excel/Outlook/Word skills          |
+| 9     | Local GGUF + GPU                      | ✅ Done    | GPU detection, one-click model downloads            |
+| 10    | Office automation                     | ✅ Done    | COM automation for Excel/Outlook/Word               |
 | 11    | Knowledge base + RAG                  | ✅ Done    | Drag-drop upload, Google Drive sync UI              |
 | 12    | Vibe Code IDE                         | ✅ Done    | 3-pane layout with Monaco, file explorer, terminal  |
-| 13    | Background research agents            | ⬜ Pending | Workers, PDF report generation                      |
-| 14    | Self-evolution & upgrades             | ⬜ Pending | Release checker, backup/restore, password gate      |
+| 13    | Background research agents            | ✅ Done    | Start/pause/stop workers, PDF report generation     |
+| 14    | Self-evolution & upgrades             | ✅ Done    | Release checker, backup/restore, password gate      |
 | 15    | MCP engine                            | ⬜ Pending | Hybrid provider, fallback dropdown                  |
 | 16    | Mobile SDK scaffold                   | ⬜ Pending | brain_lib crate, Expo project                       |
 | 17    | QA / Performance / Packaging          | ⬜ Pending | Vitest, Playwright, benchmarks, unsigned installers |
