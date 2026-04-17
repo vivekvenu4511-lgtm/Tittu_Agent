@@ -206,7 +206,9 @@ export async function chatWithOpenRouter(
 }
 
 export interface LocalModelInfo {
+  id: string;
   name: string;
+  filename: string;
   path: string;
   size_mb: number;
 }

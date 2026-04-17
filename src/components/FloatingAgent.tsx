@@ -1,18 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  Send,
-  X,
-  Minimize2,
-  Maximize2,
-  Settings,
-  Sparkles,
-} from "lucide-react";
+import { Send, X, Minimize2, Maximize2, Sparkles } from "lucide-react";
 import { clsx } from "clsx";
-import { Toaster, toast } from "sonner";
+import { Toaster } from "sonner";
 import { chatWithOpenRouter } from "../lib/api";
-import { generateId } from "../lib/store";
 import type { Message } from "../lib/types";
-import { skillRegistry, getEnabledSkills } from "../skills/registry";
+import { getEnabledSkills } from "../skills/registry";
+
+function generateId() {
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
 
 interface FloatingAgentProps {
   isOpen: boolean;

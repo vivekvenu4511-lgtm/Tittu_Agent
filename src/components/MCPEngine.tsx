@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { Zap, Server, ArrowRightLeft, Cpu, Globe, Clock, CheckCircle } from "lucide-react";
+import {
+  Zap,
+  Server,
+  ArrowRightLeft,
+  Cpu,
+  Globe,
+  Clock,
+  CheckCircle,
+} from "lucide-react";
 import { toast } from "sonner";
 
 type ProviderType = "local" | "openrouter" | "hybrid";
@@ -47,7 +55,7 @@ export function MCPEngine() {
     // Check if local GGUF models are available
     const localModels = localStorage.getItem("local_models");
     const hasLocal = localModels && JSON.parse(localModels).length > 0;
-    
+
     // Check if OpenRouter key is set
     const apiKey = localStorage.getItem("openrouter_api_key");
     const hasOpenRouter = !!apiKey;
@@ -70,24 +78,29 @@ export function MCPEngine() {
     }
   };
 
-  const providerOptions: { value: ProviderType; label: string; description: string; icon: React.ElementType }[] = [
-    { 
-      value: "local", 
-      label: "Local GGUF", 
+  const providerOptions: {
+    value: ProviderType;
+    label: string;
+    description: string;
+    icon: React.ElementType;
+  }[] = [
+    {
+      value: "local",
+      label: "Local GGUF",
       description: "Use local models ( Ollama / llama.cpp ) - offline, private",
-      icon: Cpu 
+      icon: Cpu,
     },
-    { 
-      value: "openrouter", 
-      label: "OpenRouter Cloud", 
+    {
+      value: "openrouter",
+      label: "OpenRouter Cloud",
       description: "Use cloud models via OpenRouter API - requires internet",
-      icon: Globe 
+      icon: Globe,
     },
-    { 
-      value: "hybrid", 
-      label: "Hybrid (Auto)", 
+    {
+      value: "hybrid",
+      label: "Hybrid (Auto)",
       description: "Use local, fall back to cloud if needed - best of both",
-      icon: Zap 
+      icon: Zap,
     },
   ];
 
@@ -95,9 +108,14 @@ export function MCPEngine() {
     <div className="space-y-6">
       {/* Status Overview */}
       <div className="grid grid-cols-2 gap-4">
-        <div className={`p-4 rounded-lg border ${status.local ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-200"}`}>
+        <div
+          className={`p-4 rounded-lg border ${status.local ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-200"}`}
+        >
           <div className="flex items-center gap-2">
-            <Cpu size={20} className={status.local ? "text-green-600" : "text-gray-400"} />
+            <Cpu
+              size={20}
+              className={status.local ? "text-green-600" : "text-gray-400"}
+            />
             <span className="font-medium">Local GGUF</span>
           </div>
           <div className="text-xs text-gray-500 mt-1">
@@ -105,9 +123,14 @@ export function MCPEngine() {
           </div>
         </div>
 
-        <div className={`p-4 rounded-lg border ${status.openrouter ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-200"}`}>
+        <div
+          className={`p-4 rounded-lg border ${status.openrouter ? "bg-green-50 border-green-200" : "bg-gray-50 border-gray-200"}`}
+        >
           <div className="flex items-center gap-2">
-            <Globe size={20} className={status.openrouter ? "text-green-600" : "text-gray-400"} />
+            <Globe
+              size={20}
+              className={status.openrouter ? "text-green-600" : "text-gray-400"}
+            />
             <span className="font-medium">OpenRouter</span>
           </div>
           <div className="text-xs text-gray-500 mt-1">
@@ -118,25 +141,41 @@ export function MCPEngine() {
 
       {/* Primary Provider */}
       <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-3">Primary Provider</h3>
+        <h3 className="text-sm font-medium text-gray-500 mb-3">
+          Primary Provider
+        </h3>
         <div className="space-y-2">
           {providerOptions.map((provider) => (
             <button
               key={provider.value}
-              onClick={() => setConfig((prev) => ({ ...prev, primary: provider.value }))}
+              onClick={() =>
+                setConfig((prev) => ({ ...prev, primary: provider.value }))
+              }
               className={`w-full flex items-center gap-3 p-4 border rounded-lg text-left transition-colors ${
                 config.primary === provider.value
                   ? "border-[var(--color-primary)] bg-[var(--color-primary)]/5"
                   : "border-gray-200 hover:border-gray-300"
               }`}
             >
-              <provider.icon size={20} className={config.primary === provider.value ? "text-[var(--color-primary)]" : "text-gray-400"} />
+              <provider.icon
+                size={20}
+                className={
+                  config.primary === provider.value
+                    ? "text-[var(--color-primary)]"
+                    : "text-gray-400"
+                }
+              />
               <div className="flex-1">
                 <div className="font-medium">{provider.label}</div>
-                <div className="text-xs text-gray-500">{provider.description}</div>
+                <div className="text-xs text-gray-500">
+                  {provider.description}
+                </div>
               </div>
               {config.primary === provider.value && (
-                <CheckCircle size={20} className="text-[var(--color-primary)]" />
+                <CheckCircle
+                  size={20}
+                  className="text-[var(--color-primary)]"
+                />
               )}
             </button>
           ))}
@@ -145,14 +184,18 @@ export function MCPEngine() {
 
       {/* Fallback Provider */}
       <div>
-        <h3 className="text-sm font-medium text-gray-500 mb-3">Fallback Provider</h3>
+        <h3 className="text-sm font-medium text-gray-500 mb-3">
+          Fallback Provider
+        </h3>
         <div className="space-y-2">
           {providerOptions
             .filter((p) => p.value !== config.primary)
             .map((provider) => (
               <button
                 key={provider.value}
-                onClick={() => setConfig((prev) => ({ ...prev, fallback: provider.value }))}
+                onClick={() =>
+                  setConfig((prev) => ({ ...prev, fallback: provider.value }))
+                }
                 className={`w-full flex items-center gap-3 p-4 border rounded-lg text-left transition-colors ${
                   config.fallback === provider.value
                     ? "border-[var(--color-primary)] bg-[var(--color-primary)]/5"
@@ -162,10 +205,15 @@ export function MCPEngine() {
                 <ArrowRightLeft size={16} className="text-gray-400" />
                 <div className="flex-1">
                   <div className="font-medium">{provider.label}</div>
-                  <div className="text-xs text-gray-500">Used when primary fails</div>
+                  <div className="text-xs text-gray-500">
+                    Used when primary fails
+                  </div>
                 </div>
                 {config.fallback === provider.value && (
-                  <CheckCircle size={20} className="text-[var(--color-primary)]" />
+                  <CheckCircle
+                    size={20}
+                    className="text-[var(--color-primary)]"
+                  />
                 )}
               </button>
             ))}
@@ -188,7 +236,12 @@ export function MCPEngine() {
             <input
               type="checkbox"
               checked={config.autoFallback}
-              onChange={(e) => setConfig((prev) => ({ ...prev, autoFallback: e.target.checked }))}
+              onChange={(e) =>
+                setConfig((prev) => ({
+                  ...prev,
+                  autoFallback: e.target.checked,
+                }))
+              }
               className="sr-only peer"
             />
             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[var(--color-primary)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--color-primary)]"></div>
@@ -209,7 +262,12 @@ export function MCPEngine() {
             max={120}
             step={10}
             value={config.timeout}
-            onChange={(e) => setConfig((prev) => ({ ...prev, timeout: parseInt(e.target.value) })))}
+            onChange={(e) =>
+              setConfig((prev) => ({
+                ...prev,
+                timeout: parseInt(e.target.value),
+              }))
+            }
             className="flex-1"
           />
           <span className="text-sm font-medium w-16">{config.timeout}s</span>
