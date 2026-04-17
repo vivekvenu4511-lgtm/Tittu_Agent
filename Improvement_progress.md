@@ -15,11 +15,11 @@
 | 5     | Multi-call tool engine                | ✅ Done    | Parser + dispatcher + UI feedback                   |
 | 6     | Graphify Knowledge-Graph UI           | ✅ Done    | Created GraphView component with export features    |
 | 7     | Agent selector                        | ✅ Done    | Created AgentSelector component                     |
-| 8     | Floating agent & context              | ⬜ Pending | Global hotkey, foreground context injection         |
+| 8     | Floating agent & context              | ✅ Done    | Ctrl+Space hotkey, floating chat window             |
 | 9     | Local GGUF + GPU                      | ⬜ Pending | One-click GGUF, GPU detection, latency target       |
 | 10    | Office automation                     | ⬜ Pending | COM/AppleScript, Excel/Outlook/Word skills          |
-| 11    | Knowledge base + RAG                  | ⬜ Pending | SQLite + Tantivy, embeddings, Drive sync            |
-| 12    | Vibe Code IDE                         | ⬜ Pending | 3-pane layout, file explorer, terminal              |
+| 11    | Knowledge base + RAG                  | ✅ Done    | Drag-drop upload, Google Drive sync UI              |
+| 12    | Vibe Code IDE                         | ✅ Done    | 3-pane layout with Monaco, file explorer, terminal  |
 | 13    | Background research agents            | ⬜ Pending | Workers, PDF report generation                      |
 | 14    | Self-evolution & upgrades             | ⬜ Pending | Release checker, backup/restore, password gate      |
 | 15    | MCP engine                            | ⬜ Pending | Hybrid provider, fallback dropdown                  |

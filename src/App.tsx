@@ -27,6 +27,7 @@ import { SettingsModal } from "./components/SettingsModal";
 import { SkillsManager } from "./components/SkillsManager";
 import { GraphView } from "./components/GraphView";
 import { AgentSelector } from "./components/AgentSelector";
+import { FloatingAgent } from "./components/FloatingAgent";
 
 import { chatWithOpenRouter } from "./lib/api";
 import { parseToolCalls, executeTool, removeCallBlocks } from "./lib/tools";
@@ -247,6 +248,7 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [isFirstRun, setIsFirstRun] = useState(false);
   const [activeTab, setActiveTab] = useState("workspace");
+  const [floatingOpen, setFloatingOpen] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -255,6 +257,17 @@ export default function App() {
     if (!apiKey) {
       setIsFirstRun(true);
     }
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.code === "Space") {
+        e.preventDefault();
+        setFloatingOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   useEffect(() => {
@@ -572,6 +585,10 @@ export default function App() {
       <Toaster position="top-right" />
 
       {isFirstRun && <FirstRunWizard onComplete={() => setIsFirstRun(false)} />}
+      <FloatingAgent
+        isOpen={floatingOpen}
+        onClose={() => setFloatingOpen(false)}
+      />
 
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-white flex-shrink-0">
