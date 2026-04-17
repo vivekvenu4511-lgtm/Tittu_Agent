@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import { clsx } from "clsx";
 import { Toaster, toast } from "sonner";
-import { chatWithOpenRouter } from "../../lib/api";
-import { generateId } from "../../lib/store";
-import type { Message } from "../../lib/types";
-import { skillRegistry, getEnabledSkills } from "../../skills/registry";
+import { chatWithOpenRouter } from "../lib/api";
+import { generateId } from "../lib/store";
+import type { Message } from "../lib/types";
+import { skillRegistry, getEnabledSkills } from "../skills/registry";
 
 interface FloatingAgentProps {
   isOpen: boolean;
