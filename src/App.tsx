@@ -385,7 +385,7 @@ export default function App() {
               timestamp: Date.now(),
             };
             setMessages((prev) => [...prev, resultMsg]);
-          } catch (err) {
+          } catch {
             const errorMsg: Message = {
               id: generateId(),
               role: "assistant",
