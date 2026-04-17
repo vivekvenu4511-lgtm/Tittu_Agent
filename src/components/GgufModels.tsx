@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
-import { Download, Cpu, HardDrive } from "lucide-react";
-import { clsx } from "clsx";
 import {
-  listLocalModels,
-  downloadModel,
-  getSystemInfo,
-  type LocalModelInfo,
-  type SystemInfo,
-} from "../lib/api";
+  Cpu,
+  Download,
+  Trash2,
+  Zap,
+  AlertCircle,
+  Check,
+  RefreshCw,
+  HardDrive,
+} from "lucide-react";
+import { toast } from "sonner";
+import { invoke } from "@tauri-apps/api/core";
+import { listLocalModels, downloadModel, getSystemInfo } from "../lib/api";
+import type { LocalModelInfo, SystemInfo } from "../lib/api";
 
 interface GgufModelsProps {
   onSelectModel?: (filename: string) => void;
@@ -18,155 +23,215 @@ const SUGGESTED_MODELS = [
   {
     repoId: "QuantFactory/Meta-Llama-3-8B-Instruct-GGUF",
     filename: "Meta-Llama-3-8B-Instruct-Q4_K_M.gguf",
-    size: "~5GB",
-    description: "Llama 3 8B — strong general purpose",
+    name: "Llama 3.1 8B",
+    size: "4.7GB",
   },
   {
-    repoId: "Qwen/Qwen2.5-7B-Instruct-GGUF",
-    filename: "qwen2.5-7b-instruct-q4_k_m.gguf",
-    size: "~4.5GB",
-    description: "Qwen 2.5 7B — multilingual, fast",
+    repoId: "deepseek-ai/DeepSeek-R1-GGUF",
+    filename: "DeepSeek-R1-8B-Q4_K_M.gguf",
+    name: "DeepSeek R1 8B",
+    size: "4.9GB",
   },
   {
-    repoId: "lmstudio-community/DeepSeek-R1-Distill-Q4_K_M-GGUF",
-    filename: "DeepSeek-R1-Distill-Q4_K_M.gguf",
-    size: "~4.5GB",
-    description: "DeepSeek R1 7B — strong reasoning",
-  },
-  {
-    repoId: "bartowski/gemma-2-9b-it-GGUF",
-    filename: "gemma-2-9b-it-Q4_K_M.gguf",
-    size: "~5.5GB",
-    description: "Gemma 2 9B — efficient, good quality",
+    repoId: "Qwen/Qwen2.5-3B-Instruct-GGUF",
+    filename: "Qwen2.5-3B-Instruct-Q4_K_M.gguf",
+    name: "Qwen 2.5 3B",
+    size: "2.5GB",
   },
 ];
 
 export function GgufModels({ onSelectModel, selectedModel }: GgufModelsProps) {
-  const [models, setModels] = useState<LocalModelInfo[]>([]);
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null);
-  const [downloading, setDownloading] = useState<string | null>(null);
-  const [downloadError, setDownloadError] = useState<string | null>(null);
+  const [localModels, setLocalModels] = useState<LocalModelInfo[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
-    listLocalModels()
-      .then(setModels)
-      .catch(() => setModels([]));
-    getSystemInfo()
-      .then(setSystemInfo)
-      .catch(() => {});
+    loadData();
   }, []);
 
-  const handleDownload = async (repoId: string, filename: string) => {
-    setDownloading(filename);
-    setDownloadError(null);
+  const loadData = async () => {
+    setIsLoading(true);
     try {
-      await downloadModel(repoId, filename);
-      await listLocalModels().then(setModels);
-      setDownloading(null);
+      const info = await getSystemInfo();
+      const models = await listLocalModels();
+      setSystemInfo(info);
+      setLocalModels(models);
     } catch (err) {
-      setDownloadError((err as Error).message);
-      setDownloading(null);
+      console.error("Failed to load data:", err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return (
-    <div className="space-y-4">
-      {/* System Info */}
-      {systemInfo && (
-        <div className="bg-gray-50 rounded-lg p-3 space-y-1">
-          <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-            System
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <Cpu size={14} className="text-gray-400" />
-            <span>{systemInfo.cpu_cores} CPU cores</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <HardDrive size={14} className="text-gray-400" />
-            <span>{(systemInfo.total_memory_mb / 1024).toFixed(1)} GB RAM</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <span
-              className={clsx(
-                "w-2 h-2 rounded-full",
-                systemInfo.gpu.is_available ? "bg-green-500" : "bg-gray-400",
-              )}
-            />
-            <span className="text-gray-700">
-              {systemInfo.gpu.name} ({systemInfo.gpu.backend.toUpperCase()})
-            </span>
-          </div>
-        </div>
-      )}
+  const handleDownload = async (model: (typeof SUGGESTED_MODELS)[0]) => {
+    setIsDownloading(true);
+    try {
+      await downloadModel(model.repoId, model.filename);
+      toast.success(`Downloaded ${model.name}`);
+      loadData();
+    } catch (err) {
+      toast.error(`Download failed: ${err}`);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
-      {/* Local Models */}
-      <div>
-        <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-          Local Models ({models.length})
+  const handleDelete = async (modelId: string) => {
+    try {
+      await invoke("delete_gguf_model", { modelId });
+      toast.success("Model deleted");
+      loadData();
+    } catch (err) {
+      toast.error(`Delete failed: ${err}`);
+    }
+  };
+
+  const gpuInfo = systemInfo?.gpu;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary)]"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* GPU Status Card */}
+      <div className="p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-3">
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              gpuInfo?.is_available ? "bg-green-100" : "bg-gray-200"
+            }`}
+          >
+            <Cpu
+              size={20}
+              className={
+                gpuInfo?.is_available ? "text-green-600" : "text-gray-400"
+              }
+            />
+          </div>
+          <div className="flex-1">
+            <div className="font-medium">
+              {gpuInfo?.is_available
+                ? `${gpuInfo.vendor} ${gpuInfo.name}`
+                : "No GPU Detected"}
+            </div>
+            <div className="text-sm text-gray-500">
+              {gpuInfo?.is_available
+                ? `${Math.round((gpuInfo.memory_mb || 0) / 1024)}GB VRAM • ${gpuInfo.backend} acceleration`
+                : "Using CPU only (slower performance)"}
+            </div>
+          </div>
+          <button
+            onClick={loadData}
+            className="p-2 hover:bg-gray-200 rounded-lg"
+            title="Refresh"
+          >
+            <RefreshCw size={16} />
+          </button>
         </div>
-        {models.length === 0 ? (
-          <p className="text-sm text-gray-400 italic">
-            No local GGUF models yet. Download one below.
-          </p>
+
+        {gpuInfo?.is_available ? (
+          <div className="mt-3 flex items-center gap-2 text-sm text-green-600">
+            <Zap size={14} />
+            <span>GPU acceleration enabled - optimal performance</span>
+          </div>
         ) : (
-          <div className="space-y-1">
-            {models.map((m) => (
-              <button
-                key={m.path}
-                onClick={() => onSelectModel?.(m.name + ".gguf")}
-                className={clsx(
-                  "w-full text-left px-3 py-2 rounded-lg text-sm transition-colors",
-                  selectedModel === m.name + ".gguf"
-                    ? "bg-[var(--color-bg)] font-medium border border-[var(--color-primary)]/30"
-                    : "hover:bg-gray-50",
-                )}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-900">{m.name}</span>
-                  <span className="text-xs text-gray-400">{m.size_mb} MB</span>
-                </div>
-              </button>
-            ))}
+          <div className="mt-3 flex items-center gap-2 text-sm text-amber-600">
+            <AlertCircle size={14} />
+            <span>Running in CPU-only mode. Performance will be limited.</span>
           </div>
         )}
       </div>
 
       {/* Download Models */}
       <div>
-        <div className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
-          Download Model
-        </div>
+        <h3 className="text-sm font-medium text-gray-500 mb-3">
+          Download Local GGUF Models
+        </h3>
         <div className="space-y-2">
-          {SUGGESTED_MODELS.map((m) => (
+          {SUGGESTED_MODELS.map((model) => (
             <div
-              key={m.filename}
-              className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg"
+              key={model.filename}
+              className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg hover:border-[var(--color-primary)]"
             >
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-gray-800 truncate">
-                  {m.description}
+              <div className="flex items-center gap-3">
+                <HardDrive size={16} className="text-gray-400" />
+                <div>
+                  <div className="font-medium text-sm">{model.name}</div>
+                  <div className="text-xs text-gray-500">{model.size}</div>
                 </div>
-                <div className="text-xs text-gray-400">{m.size}</div>
               </div>
               <button
-                onClick={() => handleDownload(m.repoId, m.filename)}
-                disabled={downloading === m.filename}
-                className={clsx(
-                  "ml-2 p-1.5 rounded-lg transition-colors flex-shrink-0",
-                  downloading === m.filename
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                    : "bg-[var(--color-primary)] text-white hover:opacity-80",
-                )}
-                title={`Download from HuggingFace: ${m.repoId}`}
+                onClick={() => handleDownload(model)}
+                disabled={isDownloading}
+                className="flex items-center gap-1 px-3 py-1.5 text-sm bg-[var(--color-primary)] text-white rounded-lg hover:opacity-90 disabled:opacity-50"
               >
-                <Download size={14} />
+                <Download size={12} />
+                {isDownloading ? "Loading..." : "Download"}
               </button>
             </div>
           ))}
         </div>
-        {downloadError && (
-          <p className="text-xs text-red-500 mt-2">{downloadError}</p>
-        )}
+      </div>
+
+      {/* Local Models */}
+      <div>
+        <h3 className="text-sm font-medium text-gray-500 mb-3">
+          Local Models ({localModels.length})
+        </h3>
+        <div className="space-y-2">
+          {localModels.length === 0 ? (
+            <div className="text-center py-8 text-gray-400 border border-dashed border-gray-200 rounded-lg">
+              No local models. Download one to get started.
+            </div>
+          ) : (
+            localModels.map((model) => (
+              <div
+                key={model.id}
+                className="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg"
+              >
+                <button
+                  onClick={() => onSelectModel?.(model.filename)}
+                  className="flex items-center gap-3 flex-1 text-left"
+                >
+                  <HardDrive
+                    size={16}
+                    className={
+                      selectedModel === model.filename
+                        ? "text-[var(--color-primary)]"
+                        : "text-[var(--color-primary)]"
+                    }
+                  />
+                  <div>
+                    <div className="font-medium text-sm">{model.name}</div>
+                    <div className="text-xs text-gray-500">
+                      {(model.size_mb / 1024).toFixed(1)} GB
+                      {selectedModel === model.filename && (
+                        <span className="ml-2 text-[var(--color-primary)]">
+                          Selected
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(model.id);
+                  }}
+                  className="p-1.5 text-gray-400 hover:text-red-500"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
